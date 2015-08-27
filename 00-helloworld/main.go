@@ -5,6 +5,7 @@ package main
 // Including libraries
 import (
 	"fmt"
+	"math" // Sqrt function
 	"math/rand"
 	"runtime"
 	"strings"
@@ -16,15 +17,34 @@ const Pi = 3.14159265358979323846264338327950288419716939937510582097494459
 // Declaring and initialiting several vars:
 var c, python, golang bool = false, false, true
 
-// Structs
+// Interface.
+type MusicInfo interface {
+	setName(n string)
+}
+
+// Struct
 type Band struct {
 	Name  string
 	Genre string
 	Year  int
 }
 
+// setName sets the Name variable in the object.
+// This is the implementation of the interface MusicInfo if used (see there is no "implements")
+// A type implements an interface by implementing the methods.
+// Note that b Band is not a pointer
+func (b Band) setName(n string) {
+	b.Name = n
+}
+
+// Stringer (__toString method)
+func (b Band) String() string {
+	return fmt.Sprintf("%s are a %s band formed in %v (%v years ago)", b.Name, b.Genre, b.Year, b.Age())
+}
+
 // Age returns how old the band is in years.
 // Example of methods on structs. This is like Classes on other languages: b.Age()
+// Note that b is a pointer *Band, let's keep the carbon emissions footprint low.
 func (b *Band) Age() int {
 	return time.Now().Year() - b.Year
 }
@@ -142,6 +162,11 @@ func main() {
 	b := Band{"Metallica", "Heavy metal", 1981}
 	fmt.Println(b, "Age:", b.Age())
 
+	// Using the interface
+	var mi MusicInfo
+	mi = b // Now the band is implementing the interface
+	fmt.Println(mi)
+
 	// Map of struct Band
 	var bands map[string]Band
 	bands = make(map[string]Band)
@@ -166,11 +191,11 @@ func main() {
 	delete(m2, "Metallica")
 	_, key_exists := m2["Metallica"]
 	if !key_exists {
-		fmt.Println("Map mutated correctly")
+		fmt.Println("Map mutated correctly, Metallica deleted")
 	}
-
 	fmt.Println("---")
 
+	// Some function playing
 	a := "Am Zehnten Zehnten um zehn Uhr zehn zogen zehn zahme Ziegen zehn Zentner Zucker zum Zoo"
 	fmt.Printf("Word repetition for string:\n%q\n", a)
 	fmt.Println(WordRepetition(a))
@@ -180,6 +205,13 @@ func main() {
 	for i := 0; i < 10; i++ {
 		fmt.Printf("Fibonacci(%d) = %d\n", i, f())
 	}
+	fmt.Println("---")
+
+	// Anonymous functions
+	hypot := func(x, y float64) float64 {
+		return math.Sqrt(x*x + y*y)
+	}
+	fmt.Println("hypot(3, 4)=", hypot(3, 4))
 	fmt.Println("---")
 
 	// Defering executions. When you defer sonething gets stacked until the end of the execution:
