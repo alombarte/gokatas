@@ -103,6 +103,16 @@ func fibonacci() func() int {
 
 }
 
+// sum functions takes all elements in the array and makes a sum
+func sum(a []int, c chan int) {
+	sum := 0
+
+	for _, v := range a {
+		sum += v
+	}
+	c <- sum // send sum to c
+}
+
 func main() {
 
 	// Mission accomplished!:
@@ -212,6 +222,17 @@ func main() {
 		return math.Sqrt(x*x + y*y)
 	}
 	fmt.Println("hypot(3, 4)=", hypot(3, 4))
+	fmt.Println("---")
+
+	// Channels:
+	suma := []int{7, 2, 8, -9, 4, 0}
+
+	c := make(chan int)
+	go sum(suma[:len(suma)/2], c) // Start goroutine to sum first half of the array
+	go sum(suma[len(suma)/2:], c) // Start goroutine to sum sencond half of the array
+	x, y := <-c, <-c // receive from c
+
+	fmt.Println(x, y, x+y)
 	fmt.Println("---")
 
 	// Defering executions. When you defer sonething gets stacked until the end of the execution:
