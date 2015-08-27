@@ -59,13 +59,27 @@ func WordRepetition(s string) map[string]int {
 	repetitions = make(map[string]int) // After declaring a map needs to be initialized with 'make' before using it.
 
 	words := strings.Fields(s)
-	
+
 	// Iterate using key => value in a range. Underscore means the var won't be used.
 	for _, word := range words {
 		repetitions[word]++
 	}
 
 	return repetitions
+}
+
+// fibonacci function returns an anonymous function that returns an integer itself.
+func fibonacci() func() int {
+	// fmt.Println("This code is executed only the first time")
+	// Notice that this vars will be modified by the following anonymous function every time.
+	prev, next := 0, 1
+
+	return func() int {
+		// fmt.Println("This code is executed subsequent times")
+		prev, next = next, prev+next
+		return prev
+	}
+
 }
 
 func main() {
@@ -83,11 +97,17 @@ func main() {
 
 	v := Vertex{3.0, -4.0}
 	fmt.Println("Vertex:", v.X, v.Y, "Abs():", v.Abs())
-
 	fmt.Println("---")
+
 	a := "Am Zehnten Zehnten um zehn Uhr zehn zogen zehn zahme Ziegen zehn Zentner Zucker zum Zoo"
 	fmt.Printf("Word repetition for string:\n%q\n", a)
 	fmt.Println(WordRepetition(a))
+	fmt.Println("---")
+
+	f := fibonacci()
+	for i := 0; i < 10; i++ {
+		fmt.Printf("Fibonacci(%d) = %d\n", i, f())
+	}
 	fmt.Println("---")
 
 }
