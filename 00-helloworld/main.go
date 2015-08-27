@@ -5,7 +5,6 @@ package main
 // Including libraries
 import (
 	"fmt"
-	"math"
 	"math/rand"
 	"runtime"
 	"strings"
@@ -18,14 +17,16 @@ const Pi = 3.14159265358979323846264338327950288419716939937510582097494459
 var c, python, golang bool = false, false, true
 
 // Structs
-type Vertex struct {
-	X float64
-	Y float64
+type Band struct {
+	Name  string
+	Genre string
+	Year  int
 }
 
-// Methods on structs. This is like Classes on other languages: V.abs()
-func (v *Vertex) Abs() float64 {
-	return math.Sqrt(v.X*v.X + v.Y*v.Y)
+// Age returns how old the band is in years.
+// Example of methods on structs. This is like Classes on other languages: b.Age()
+func (b *Band) Age() int {
+	return time.Now().Year() - b.Year
 }
 
 // getOS returns the current operattive system on which the program runs.
@@ -84,7 +85,7 @@ func fibonacci() func() int {
 
 func main() {
 
-	// Mission accomplished:
+	// Mission accomplished!:
 	fmt.Println(swapText("world", "hello"))
 	fmt.Println("---")
 
@@ -95,8 +96,79 @@ func main() {
 	fmt.Println("Running under:", getOS())
 	fmt.Println("---")
 
-	v := Vertex{3.0, -4.0}
-	fmt.Println("Vertex:", v.X, v.Y, "Abs():", v.Abs())
+	fmt.Println("Basics...")
+
+	// Pointers:
+	i, j := 10, 50
+	p := &i         // p points to i
+	fmt.Println(*p) // read i through the pointer (prints 10)
+	*p = 21         // set i through the pointer
+	fmt.Println(i)  // see the new value of i (prints 21)
+
+	p = &j         // point to j
+	*p = *p / 2    // divide j through the pointer
+	fmt.Println(j) // see the new value of j (25)
+	fmt.Println("---")
+
+	// Declare an array of integers
+	s := []int{2, 3, 5, 7, 11, 13}
+	fmt.Println("s ==", s)
+
+	//Loop
+	for i := 0; i < len(s); i++ {
+		fmt.Printf("s[%d] == %d\n", i, s[i])
+	}
+
+	//Convenient loop using range (key => value)
+	for k, v := range s {
+		fmt.Printf("s[%d] = %d, ", k, v)
+	}
+
+	fmt.Printf("\nValues: ")
+	//Loop using range and ignoring key or value (place an underscore)
+	for _, v := range s {
+		fmt.Printf("%d, ", v)
+	}
+	fmt.Println("---")
+
+	// Slices
+	slice := make([]int, 5)
+	// Grow it over its capacity with append
+	slice = append(slice, 5, 6, 7, 8, 9, 10)
+	fmt.Println("Slice:", slice, "Len:", len(slice), "Capacity:", cap(slice))
+	fmt.Println("---")
+
+	// Using structs
+	b := Band{"Metallica", "Heavy metal", 1981}
+	fmt.Println(b, "Age:", b.Age())
+
+	// Map of struct Band
+	var bands map[string]Band
+	bands = make(map[string]Band)
+
+	bands["RHCP"] = Band{"Red Hot Chili Peppers", "Heavy metal", 1983}
+	bands["Metallica"] = Band{"Metallica", "Heavy metal", 1981}
+	fmt.Println(bands["Metallica"].Year, bands["Metallica"].Genre)
+
+	// Or use map literals:
+	var m2 = map[string]Band{
+		"RHCP": Band{
+			"Red Hot Chili Peppers", "Heavy metal", 1983,
+		}, // Type "Band" can be omitted if only using one:
+		"Metallica": {
+			"Metallica", "Heavy metal", 1981,
+		},
+	}
+
+	fmt.Println(m2["RHCP"].Name, m2["joselito"].Genre)
+
+	//Map mutation
+	delete(m2, "Metallica")
+	_, key_exists := m2["Metallica"]
+	if !key_exists {
+		fmt.Println("Map mutated correctly")
+	}
+
 	fmt.Println("---")
 
 	a := "Am Zehnten Zehnten um zehn Uhr zehn zogen zehn zahme Ziegen zehn Zentner Zucker zum Zoo"
@@ -109,5 +181,12 @@ func main() {
 		fmt.Printf("Fibonacci(%d) = %d\n", i, f())
 	}
 	fmt.Println("---")
+
+	// Defering executions. When you defer sonething gets stacked until the end of the execution:
+	defer fmt.Println(">>...WORLD! (1st deferred)")
+	defer fmt.Println(">>...2nd deferred")
+	defer fmt.Println(">>...3rd deferred")
+
+	fmt.Println(">>GOODBYE...")
 
 }
