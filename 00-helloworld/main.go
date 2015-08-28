@@ -20,6 +20,7 @@ var c, python, golang bool = false, false, true
 // Interface.
 type MusicInfo interface {
 	setName(n string)
+	getName() string
 }
 
 // Struct
@@ -37,6 +38,10 @@ func (b Band) setName(n string) {
 	b.Name = n
 }
 
+func (b Band) getName() string {
+	return b.Name
+}
+
 // Stringer (__toString method)
 func (b Band) String() string {
 	return fmt.Sprintf("%s are a %s band formed in %v (%v years ago)", b.Name, b.Genre, b.Year, b.Age())
@@ -44,9 +49,10 @@ func (b Band) String() string {
 
 // Age returns how old the band is in years.
 // Example of methods on structs. This is like Classes on other languages: b.Age()
-// Note that b is a pointer *Band, let's keep the carbon emissions footprint low.
+// Note that b is a pointer *Band, we use it when we want to modify the same passed object (not the case here)
 func (b *Band) Age() int {
-	return time.Now().Year() - b.Year
+	age := time.Now().Year() - b.Year
+	return age
 }
 
 // getOS returns the current operattive system on which the program runs.
@@ -172,11 +178,6 @@ func main() {
 	b := Band{"Metallica", "Heavy metal", 1981}
 	fmt.Println(b, "Age:", b.Age())
 
-	// Using the interface
-	var mi MusicInfo
-	mi = b // Now the band is implementing the interface
-	fmt.Println(mi)
-
 	// Map of struct Band
 	var bands map[string]Band
 	bands = make(map[string]Band)
@@ -196,6 +197,20 @@ func main() {
 	}
 
 	fmt.Println(m2["RHCP"].Name, m2["joselito"].Genre)
+
+	// Same thing, using the interface
+	var bandsIf map[string]MusicInfo
+	bandsIf = make(map[string]MusicInfo)
+	bandsIf["Nirvana"] = Band{"Nirvana", "Grunge", 1987}
+	for _, v := range bandsIf {
+		fmt.Println(v)
+
+		// The interface MusicInfo does not have the Age method, even the object used is Band
+		// So in case we wanted to access Age the object should be casted to Band:
+		castedBand := v.(Band)
+		fmt.Println(castedBand.Age())
+
+	}
 
 	//Map mutation
 	delete(m2, "Metallica")
@@ -230,7 +245,7 @@ func main() {
 	c := make(chan int)
 	go sum(suma[:len(suma)/2], c) // Start goroutine to sum first half of the array
 	go sum(suma[len(suma)/2:], c) // Start goroutine to sum sencond half of the array
-	x, y := <-c, <-c // receive from c
+	x, y := <-c, <-c              // receive from c
 
 	fmt.Println(x, y, x+y)
 	fmt.Println("---")
